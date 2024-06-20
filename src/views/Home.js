@@ -60,6 +60,9 @@ const Home = () => {
             const today = new Date();
             const aBirthDate = new Date(a.BirthDate);
             const bBirthDate = new Date(b.BirthDate);
+
+            // In order to compare the dates, we need to set the year of the birth date to the current year
+            // If the birth date has already passed this year, we set it to the next year
             if (today.getMonth() > aBirthDate.getMonth()) {
                 aBirthDate.setFullYear(today.getFullYear() + 1);
             }
@@ -69,6 +72,8 @@ const Home = () => {
             else {
                 aBirthDate.setFullYear(today.getFullYear());
             }
+
+            // Same for the other member
             if (today.getMonth() > bBirthDate.getMonth()) {
                 bBirthDate.setFullYear(today.getFullYear() + 1);
             }
@@ -78,6 +83,7 @@ const Home = () => {
             else {
                 bBirthDate.setFullYear(today.getFullYear());
             }
+
             const aDiff = aBirthDate - today;
             const bDiff = bBirthDate - today;
             return aDiff - bDiff;

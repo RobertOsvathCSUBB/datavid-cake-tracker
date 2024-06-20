@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { db } from "../config/firebase";
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 import AddModal from "../components/AddModal";
+import { checkIfFieldsExist, validateUniqueConstraint, validateAgeConstraint } from "../utils/utils";
 
 const Home = () => {
     const [members, setMembers] = useState([]);
@@ -28,14 +29,17 @@ const Home = () => {
 
     const handleAddMember = async (newMember) => {
         try {
+            checkIfFieldsExist(newMember);
+            await validateUniqueConstraint(newMember);
+            validateAgeConstraint(newMember);
             await addDoc(membersCollectionRef, newMember);
             fetchMembers();
-            setShowModal(false);
         }
         catch (err) {
             console.log(err);
             window.alert("Error adding member!");
         }
+        setShowModal(false);
     };
 
     const handleDeleteMember = async (id) => {

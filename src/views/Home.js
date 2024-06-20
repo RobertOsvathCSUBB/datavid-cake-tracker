@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { db } from "../config/firebase";
 import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 import AddModal from "../components/AddModal";
-import { checkIfFieldsExist, validateUniqueConstraint, validateAgeConstraint } from "../utils/utils";
+import { 
+checkIfFieldsExist,
+validateUniqueConstraint,
+validateAgeConstraint,
+getSortedMembersByClosestBirthday } 
+from "../utils/utils";
 
 const Home = () => {
     const [members, setMembers] = useState([]);
@@ -56,39 +61,7 @@ const Home = () => {
     };
 
     const sortMembersByClosestBirthday = () => {
-        const sortedMembers = [...members].sort((a, b) => {
-            const today = new Date();
-            const aBirthDate = new Date(a.BirthDate);
-            const bBirthDate = new Date(b.BirthDate);
-
-            // In order to compare the dates, we need to set the year of the birth date to the current year
-            // If the birth date has already passed this year, we set it to the next year
-            if (today.getMonth() > aBirthDate.getMonth()) {
-                aBirthDate.setFullYear(today.getFullYear() + 1);
-            }
-            else if (today.getMonth() === aBirthDate.getMonth() && today.getDate() > aBirthDate.getDate()) {
-                aBirthDate.setFullYear(today.getFullYear() + 1);
-            }
-            else {
-                aBirthDate.setFullYear(today.getFullYear());
-            }
-
-            // Same for the other member
-            if (today.getMonth() > bBirthDate.getMonth()) {
-                bBirthDate.setFullYear(today.getFullYear() + 1);
-            }
-            else if (today.getMonth() === bBirthDate.getMonth() && today.getDate() > bBirthDate.getDate()) {
-                bBirthDate.setFullYear(today.getFullYear() + 1);
-            }
-            else {
-                bBirthDate.setFullYear(today.getFullYear());
-            }
-
-            const aDiff = aBirthDate - today;
-            const bDiff = bBirthDate - today;
-            return aDiff - bDiff;
-        });
-        setMembers(sortedMembers);
+        setMembers(getSortedMembersByClosestBirthday(members));
     };
 
     return (

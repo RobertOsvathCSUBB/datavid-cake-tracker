@@ -43,3 +43,39 @@ export const validateAgeConstraint = (member) => {
     }
     return null;
 };
+
+export const getSortedMembersByClosestBirthday = (members) => {
+    const sortedMembers = [...members].sort((a, b) => {
+        const today = new Date();
+        const aBirthDate = new Date(a.BirthDate);
+        const bBirthDate = new Date(b.BirthDate);
+
+        // In order to compare the dates, we need to set the year of the birth date to the current year
+        // If the birth date has already passed this year, we set it to the next year
+        if (today.getMonth() > aBirthDate.getMonth()) {
+            aBirthDate.setFullYear(today.getFullYear() + 1);
+        }
+        else if (today.getMonth() === aBirthDate.getMonth() && today.getDate() > aBirthDate.getDate()) {
+            aBirthDate.setFullYear(today.getFullYear() + 1);
+        }
+        else {
+            aBirthDate.setFullYear(today.getFullYear());
+        }
+
+        // Same for the other member
+        if (today.getMonth() > bBirthDate.getMonth()) {
+            bBirthDate.setFullYear(today.getFullYear() + 1);
+        }
+        else if (today.getMonth() === bBirthDate.getMonth() && today.getDate() > bBirthDate.getDate()) {
+            bBirthDate.setFullYear(today.getFullYear() + 1);
+        }
+        else {
+            bBirthDate.setFullYear(today.getFullYear());
+        }
+
+        const aDiff = aBirthDate - today;
+        const bDiff = bBirthDate - today;
+        return aDiff - bDiff;
+    });
+    return sortedMembers;
+};
